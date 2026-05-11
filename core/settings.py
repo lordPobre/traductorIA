@@ -102,7 +102,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "https://traductor-frontend-zeta.vercel.app/", # <-- ¡REEMPLAZA ESTO por tu link real de Vercel!
+    "https://traductor-frontend-zeta.vercel.app", # <-- ¡REEMPLAZA ESTO por tu link real de Vercel!
 ]
 
 USE_S3 = os.getenv('USE_S3') == 'TRUE'
@@ -141,7 +141,13 @@ DEEPL_API_URL = os.getenv('DEEPL_API_URL', 'https://api-free.deepl.com/v2/transl
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CELERY_BROKER_URL = os.getenv('REDIS_URL', 'redis://localhost:6379/0')
-CELERY_RESULT_BACKEND = os.getenv('REDIS_URL')
+if CELERY_BROKER_URL.startswith('rediss://'):
+    CELERY_BROKER_USE_SSL = {
+        'ssl_cert_reqs': 'none' # Esto permite la conexión segura sin validar certificados locales
+    }
+    CELERY_REDIS_BACKEND_USE_SSL = {
+        'ssl_cert_reqs': 'none'
+    }
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
