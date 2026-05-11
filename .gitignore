@@ -1,0 +1,14 @@
+# Entornos virtuales
+venv/
+env/
+__pycache__/
+*.pyc
+
+# Base de datos local y archivos multimedia
+db.sqlite3
+media/
+
+# Variables de entorno SECRETAS
+.env
+
+celerybeat-schedule*
