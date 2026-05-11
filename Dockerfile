@@ -7,6 +7,9 @@ RUN apt-get update && apt-get install -y \
     tesseract-ocr-spa \
     tesseract-ocr-eng \
     poppler-utils \
+    gcc \
+    python3-dev \
+    libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # 3. Establecer la carpeta de trabajo
