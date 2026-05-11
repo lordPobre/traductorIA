@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from celery.schedules import crontab
+import dj_database_url
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -12,7 +13,7 @@ SECRET_KEY = 'django-insecure--czy^l^vnr+d5n5d3&!iseg#vnd(q=qi(ycx2&dj9-ei2usw6o
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 INSTALLED_APPS = [
@@ -59,17 +60,17 @@ TEMPLATES = [
 WSGI_APPLICATION = 'core.wsgi.application'
 
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT'),
+if os.getenv('DATABASE_URL'):
+    DATABASES = {
+        'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
     }
-}
-
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -101,6 +102,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "https://traductor-frontend-zeta.vercel.app/", # <-- ¡REEMPLAZA ESTO por tu link real de Vercel!
 ]
 
 USE_S3 = os.getenv('USE_S3') == 'TRUE'
@@ -128,7 +130,7 @@ else:
     # --- CONFIGURACIÓN LOCAL (TU COMPUTADORA) ---
     MEDIA_URL = '/media/'
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-    
+
 STATIC_URL = 'static/'
 
 TESSERACT_CMD_PATH = os.getenv('TESSERACT_CMD_PATH', None)
@@ -138,7 +140,7 @@ DEEPL_API_URL = os.getenv('DEEPL_API_URL', 'https://api-free.deepl.com/v2/transl
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CELERY_BROKER_URL = os.getenv('REDIS_URL')
+CELERY_BROKER_URL = os.getenv('REDIS_URL', 'redis://localhost:6379/0')
 CELERY_RESULT_BACKEND = os.getenv('REDIS_URL')
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
